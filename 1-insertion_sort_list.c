@@ -1,91 +1,36 @@
 #include "sort.h"
-/**
- * insertion_sort_list - order a dll
- * @list: Double ll
- * Return: Nothing
- */
 
+/**
+ * insertion_sort_list - sorts a doubly linked list of integers in ascending
+ * order using the Insertion sort algorithm
+ * @list: Double pointer to the head of the linked list
+ *
+ * Return: void
+ */
 void insertion_sort_list(listint_t **list)
 {
-	listint_t *tmp = NULL, *tmp2 = NULL, *tmp3 = NULL;
+	listint_t *swap_node, *next_swap;
 
-	if (list == NULL || *list == NULL || (*list)->next == NULL)
-	{
+	if (list == NULL || *list == NULL)
 		return;
-	}
-	tmp = *list;
-	while (tmp)
+	swap_node = (*list)->next;
+	while (swap_node != NULL)
 	{
-		if (tmp->prev)
+		next_swap = swap_node->next;
+		while (swap_node->prev != NULL && swap_node->prev->n > swap_node->n)
 		{
-			if (tmp->prev->n > tmp->n)
-			{
-				tmp2 = tmp;
-				tmp3 = tmp;
-				swap(list, tmp->prev, tmp);
-				tmp = tmp->next;
-				print_list(*list);
-				while (tmp3)
-				{
-					if (tmp3->n > tmp2->n)
-					{
-						swap(list, tmp3, tmp2);
-						print_list(*list);
-					}
-					tmp3 = tmp3->prev;
-				}
-			}
+			swap_node->prev->next = swap_node->next;
+			if (swap_node->next != NULL)
+				swap_node->next->prev = swap_node->prev;
+			swap_node->next = swap_node->prev;
+			swap_node->prev = swap_node->next->prev;
+			swap_node->next->prev = swap_node;
+			if (swap_node->prev == NULL)
+				*list = swap_node;
+			else
+				swap_node->prev->next = swap_node;
+			print_list(*list);
 		}
-		tmp = tmp->next;
-	}
-
-}
-/**
- * swap - swap the nodes of the list
- * @list: Double ll
- * @node1: Node 1
- * @node2: Node 2
- * Return: Nothing
- */
-
-
-void swap(listint_t **list, listint_t *node1, listint_t *node2)
-{
-	listint_t *n1 = node1->prev;
-	listint_t *n2 = node2->next;
-
-	if (node1->prev == NULL  && node2->next == NULL)
-	{
-		node1->next = NULL;
-		node2->prev = NULL;
-		node1->prev = node2;
-		node2->next = node1;
-		*list = node2;
-	}
-	else if (node1->prev == NULL)
-	{
-		node1->next = n2;
-		node2->prev = NULL;
-		node1->prev = node2;
-		node2->next = node1;
-		n2->prev = node1;
-		*list = node2;
-	}
-	else if (node2->next == NULL)
-	{
-		node1->prev = node2;
-		node2->next = node1;
-		node2->prev = n1;
-		n1->next = node2;
-		node1->next = NULL;
-	}
-	else
-	{
-		node1->prev = node2;
-		node2->next = node1;
-		node1->next = n2;
-		node2->prev = n1;
-		n1->next = node2;
-		n2->prev = node1;
+		swap_node = next_swap;
 	}
 }
